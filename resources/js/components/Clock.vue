@@ -95,10 +95,10 @@ onBeforeUnmount(() => {
 <template>
   <div class="pt-5 min-h-screen bg-white">
     <div class="flex justify-between items-center p-2 px-4 sm:px-6 md:px-8 bg-white shadow">
-      <div class="text-sm sm:text-base md:text-lg font-medium text-gray-950 pl-4 sm:pl-6 md:pl-16">
+      <div class="text-sm sm:text-base md:text-lg font-medium text-gray-950 pl-1 md:pl-16">
         Trạng thái nhận diện
       </div>
-      <div v-if="isLogin" class="flex items-center space-x-2 sm:space-x-4 pr-4 sm:pr-6 md:pr-16">
+      <div v-if="isLogin" class="flex items-center space-x-2 sm:space-x-4 pr-1  md:pr-16">
         <div class="text-xs sm:text-sm md:text-base font-medium text-gray-950">
           Phúc Rờm
         </div>
@@ -118,15 +118,16 @@ onBeforeUnmount(() => {
 
     <!-- Tổng thời gian -->
     <div
-      class="flex flex-col sm:flex-row sm:justify-start mt-7 max-w-[90%] lg:max-w-[80%] mx-auto items-start sm:items-center text-gray-950 space-y-4 sm:space-y-0 sm:space-x-24">
+      class="flex flex-col sm:flex-row sm:justify-start mt-7 max-w-[90%] lg:max-w-[80%] mx-auto items-start text-gray-950 space-y-4 sm:space-y-0 sm:space-x-12">
       <p>
         Tổng thời gian <span class="font-semibold text-green-600">có mặt:</span>
         {{ totalPresentTime }} giây
       </p>
-      <p>
+      <p class="truncate">
         Tổng thời gian <span class="font-semibold text-red-600">vắng mặt:</span>
         {{ totalAbsentTime }} giây
       </p>
+
     </div>
 
     <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-4 mt-4 max-w-[90%] lg:max-w-[80%] mx-auto">
