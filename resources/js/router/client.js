@@ -8,6 +8,11 @@ const client = [
                 name: 'home',
                 component: () => import('@/pages/clients/home/index.vue'),
             },
+            {
+                path: '/login',
+                name: 'login',
+                component: () => import('@/pages/clients/login/index.vue'),
+            },
         ]
     }
 ]

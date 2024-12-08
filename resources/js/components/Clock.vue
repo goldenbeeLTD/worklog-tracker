@@ -17,6 +17,7 @@ const absentDurations = ref([]);
 let currentStart = ref(null);
 let interval = null;
 let detector = null;
+let isLogin = ref(true);
 
 // Thời gian hiện tại
 const now = useNow();
@@ -92,53 +93,85 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-yellow-50">
-    <div class="p-5 flex flex-col items-center">
-      <div class="w-full max-w-5xl bg-white rounded-xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="space-y-6">
-          <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Person /> Trạng thái nhận diện
-          </h2>
-          <!-- Video stream và trạng thái phát hiện -->
-          <div class="relative w-full h-72 bg-yellow-500 rounded-lg overflow-hidden">
-            <video ref="video" autoplay muted playsinline class="w-full h-full object-cover"></video>
-            <!-- Vòng trạng thái -->
-            <div
-              :class="detectedFace ? 'bg-green-500' : 'bg-red-500'"
-              class="absolute top-4 left-4 w-5 h-5 rounded-full shadow"
-              title="Trạng thái phát hiện"
-            >
-              <template v-if="detectedFace">
-                <FaceHappy class="text-white" />
-              </template>
-              <template v-else>
-                <FaceSad class="text-white" />
-              </template>
-            </div>
-          </div>
-          <!-- Thông báo Skeleton loading -->
-          <Skeleton v-if="detectedFace === null" height="18rem" class="rounded-lg overflow-hidden"></Skeleton>
-          <!-- Tổng thời gian -->
-          <div class="text-sm space-y-1" v-else>
-            <p>
-              Tổng thời gian <span class="font-semibold text-green-600">có mặt:</span>
-              {{ totalPresentTime }} giây
-            </p>
-            <p>
-              Tổng thời gian <span class="font-semibold text-red-600">vắng mặt:</span>
-              {{ totalAbsentTime }} giây
-            </p>
+  <div class="pt-5 min-h-screen bg-white">
+    <div class="flex justify-between items-center p-2 px-4 sm:px-6 md:px-8 bg-white shadow">
+      <div class="text-sm sm:text-base md:text-lg font-medium text-gray-950 pl-4 sm:pl-6 md:pl-16">
+        Trạng thái nhận diện
+      </div>
+      <div v-if="isLogin" class="flex items-center space-x-2 sm:space-x-4 pr-4 sm:pr-6 md:pr-16">
+        <div class="text-xs sm:text-sm md:text-base font-medium text-gray-950">
+          Phúc Rờm
+        </div>
+        <div class="bg-blue-500 w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center">
+          <span class="text-white text-[10px] sm:text-xs md:text-sm">
+            PK
+          </span>
+        </div>
+      </div>
+      <div v-else="isLogin" class="flex items-center space-x-2 sm:space-x-4 pr-4 sm:pr-6 md:pr-16 cursor-pointer">
+        <a href="/login" class="text-sm sm:text-base md:text-lg font-medium text-gray-950 hover:text-orange-700">
+          Sign in
+        </a>
+      </div>
+    </div>
+
+
+    <!-- Tổng thời gian -->
+    <div
+      class="flex flex-col sm:flex-row sm:justify-start mt-7 max-w-[90%] lg:max-w-[80%] mx-auto items-start sm:items-center text-gray-950 space-y-4 sm:space-y-0 sm:space-x-24">
+      <p>
+        Tổng thời gian <span class="font-semibold text-green-600">có mặt:</span>
+        {{ totalPresentTime }} giây
+      </p>
+      <p>
+        Tổng thời gian <span class="font-semibold text-red-600">vắng mặt:</span>
+        {{ totalAbsentTime }} giây
+      </p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-4 mt-4 max-w-[90%] lg:max-w-[80%] mx-auto">
+      <div
+        class="relative w-full lg:w-8/12 max-h-[400px] sm:max-h-[500px] bg-gray-800 rounded-lg shadow-lg flex items-center justify-center">
+        <div class="relative w-full max-h-[400px] sm:max-h-[500px] rounded-lg overflow-hidden">
+          <video ref="video" autoplay muted playsinline class="w-full h-full object-cover"></video>
+          <div :class="detectedFace ? 'bg-green-500' : 'bg-red-500'"
+            class="absolute top-4 left-4 w-6 h-6 rounded-full shadow-lg" title="Trạng thái phát hiện">
+            <template v-if="detectedFace">
+              <FaceHappy class="text-white" />
+            </template>
+            <template v-else>
+              <FaceSad class="text-white" />
+            </template>
           </div>
         </div>
-        <!-- Lịch sử thời gian -->
-        <div class="space-y-6">
-          <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Alarm /> Lịch sử thời gian
-          </h2>
-          <div class="relative border-l-4 border-gray-300 pl-6 space-y-6 max-h-[500px] overflow-y-auto">
+        <Skeleton v-if="detectedFace === null" height="18rem" class="rounded-lg bg-gray-300"></Skeleton>
+
+        <div :class="detectedFace ? 'text-green-500' : 'text-red-500'"
+          class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-sm px-4 py-2 rounded-lg flex items-center space-x-1">
+          <span>{{ detectedFace ? 'Có mặt' : 'Không có mặt' }}</span>
+          <i class="fas fa-signal"></i>
+        </div>
+      </div>
+
+      <div class="relative w-full lg:w-4/12 min-h-[300px] sm:min-h-[480px] bg-white rounded-lg shadow justify-center">
+        <div class="flex justify-between items-center p-2 px-4 sm:px-6 shadow">
+          <div class="text-sm sm:text-base font-medium text-gray-950">
+            Lịch sử thời gian
+          </div>
+          <div class="flex items-center space-x-2 sm:space-x-4">
+            <div class="text-sm font-medium text-gray-950">Phúc Rờm</div>
+            <div class="bg-blue-500 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center">
+              <span class="text-white text-xs sm:text-sm">PK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div
+            class="relative border-l-4 border-gray-300 pl-6 pt-4 space-y-6 max-h-[280px] sm:max-h-[445px] overflow-y-auto">
             <div v-for="(duration, index) in allDurations" :key="index" class="relative">
-              <div>
-                <p class="text-sm text-gray-600">
+              <div class="flex justify-between">
+                <p class="text-sm text-gray-700">
                   <span
                     :class="duration.type === 'present' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
                     {{ duration.type === 'present' ? 'Có mặt' : 'Vắng mặt' }}
@@ -149,6 +182,10 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="absolute top-2 right-2 text-white">
+          <i class="fas fa-ellipsis-h"></i>
         </div>
       </div>
     </div>
